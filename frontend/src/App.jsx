@@ -34,9 +34,11 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 const queryClient = new QueryClient();
 
 // Set up axios defaults
+// Update axios defaults
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 console.log(axios.defaults.baseURL);
 axios.defaults.withCredentials = true;
+axios.defaults.headers.common['Accept'] = 'application/json';
 
 function App() {
   return (
