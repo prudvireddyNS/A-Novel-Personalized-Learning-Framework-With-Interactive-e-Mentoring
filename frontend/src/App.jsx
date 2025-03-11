@@ -36,14 +36,24 @@ const queryClient = new QueryClient();
 // Set up axios defaults
 // Update axios defaults
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = false; // Change this to false
 axios.defaults.headers.common['Accept'] = 'application/json';
 
-// Remove these problematic lines
-// axios.defaults.headers.common['Access-Control-Allow-Origin'] = '...';
-// axios.interceptors.request.use...
+// Add request interceptor to handle auth
+axios.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
 
-// Add error interceptor instead
+// Error interceptor
 axios.interceptors.response.use(
   response => response,
   error => {
@@ -114,5 +124,5 @@ function ProtectedRoute({ children, allowedRole }) {
   
   return children;
 }
-
+console.log("HI");
 export default App;
