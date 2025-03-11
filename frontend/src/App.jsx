@@ -34,7 +34,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 const queryClient = new QueryClient();
 
 // Set up axios defaults
-axios.defaults.baseURL = 'http://localhost:8000';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = true;
 
 function App() {
