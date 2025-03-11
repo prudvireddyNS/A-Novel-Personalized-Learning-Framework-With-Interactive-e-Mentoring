@@ -34,9 +34,10 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 const queryClient = new QueryClient();
 
 // Set up axios defaults
-// Update axios defaults
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
-axios.defaults.withCredentials = false; // Change this to false
+console.log(axios.defaults.baseURL);
+
+axios.defaults.withCredentials = false;
 axios.defaults.headers.common['Accept'] = 'application/json';
 
 // Add request interceptor to handle auth
@@ -46,14 +47,13 @@ axios.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    // Don't set CORS headers here - let the browser handle it
     return config;
   },
-  error => {
-    return Promise.reject(error);
-  }
+  error => Promise.reject(error)
 );
 
-// Error interceptor
+// Error interceptor remains the same
 axios.interceptors.response.use(
   response => response,
   error => {
@@ -124,5 +124,5 @@ function ProtectedRoute({ children, allowedRole }) {
   
   return children;
 }
-console.log("HI");
+
 export default App;
