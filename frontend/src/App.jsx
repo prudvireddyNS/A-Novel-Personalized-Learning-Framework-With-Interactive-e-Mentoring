@@ -35,6 +35,7 @@ const queryClient = new QueryClient();
 
 // Set up axios defaults
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
+console.log(axios.defaults.baseURL);
 axios.defaults.withCredentials = true;
 
 function App() {
