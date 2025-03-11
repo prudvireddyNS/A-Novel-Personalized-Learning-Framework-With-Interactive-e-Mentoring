@@ -38,16 +38,22 @@ const queryClient = new QueryClient();
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = true;
 axios.defaults.headers.common['Accept'] = 'application/json';
-axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'https://a-novel-personalized-learning-git-5db0d2-vemu-project-b4a5aba8.vercel.app';
 
-// Add interceptor to handle CORS preflight
-axios.interceptors.request.use(function (config) {
-  // Add CORS headers to every request
-  config.headers['Origin'] = 'https://a-novel-personalized-learning-git-5db0d2-vemu-project-b4a5aba8.vercel.app';
-  return config;
-}, function (error) {
-  return Promise.reject(error);
-});
+// Remove these problematic lines
+// axios.defaults.headers.common['Access-Control-Allow-Origin'] = '...';
+// axios.interceptors.request.use...
+
+// Add error interceptor instead
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 function App() {
   return (
