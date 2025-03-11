@@ -36,104 +36,110 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Login function
+  // At the top of the file, after imports
+  axios.defaults.withCredentials = true;
+  
+  // Update the login function
   const login = async (email, password) => {
-    try {
-      const response = await axios.post('/token', 
-        new URLSearchParams({
-          'username': email,
-          'password': password
-        }),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+      try {
+        const response = await axios.post('/token', 
+          new URLSearchParams({
+            'username': email,
+            'password': password
+          }),
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Accept': 'application/json'
+            },
+            withCredentials: true
           }
-        }
-      );
+        );
 
-      const { access_token, role } = response.data;
-      
-      // Store token in localStorage
-      localStorage.setItem('token', access_token);
-      
-      // Set the authorization header for all future requests
-      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      
-      // Get user data
-      const userResponse = await axios.get('/users/me');
-      setUser(userResponse.data);
-      
-      return { success: true, role };
-    } catch (error) {
-      console.error('Login failed:', error);
-      return { 
-        success: false, 
-        error: error.response?.data?.detail || 'Login failed. Please try again.'
-      };
-    }
-  };
+        const { access_token, role } = response.data;
+        
+        // Store token in localStorage
+        localStorage.setItem('token', access_token);
+        
+        // Set the authorization header for all future requests
+        axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+        
+        // Get user data
+        const userResponse = await axios.get('/users/me');
+        setUser(userResponse.data);
+        
+        return { success: true, role };
+      } catch (error) {
+        console.error('Login failed:', error);
+        return { 
+          success: false, 
+          error: error.response?.data?.detail || 'Login failed. Please try again.'
+        };
+      }
+    };
 
-  // Google login function
-  const googleLogin = async (token) => {
-    try {
-      const response = await axios.post('/google-login', { token });
-      const { access_token, role } = response.data;
-      
-      // Store token in localStorage
-      localStorage.setItem('token', access_token);
-      
-      // Set the authorization header for all future requests
-      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      
-      // Get user data
-      const userResponse = await axios.get('/users/me');
-      setUser(userResponse.data);
-      
-      return { success: true, role };
-    } catch (error) {
-      console.error('Google login failed:', error);
-      return { 
-        success: false, 
-        error: error.response?.data?.detail || 'Google login failed. Please try again.'
-      };
-    }
-  };
+    // Google login function
+    const googleLogin = async (token) => {
+      try {
+        const response = await axios.post('/google-login', { token });
+        const { access_token, role } = response.data;
+        
+        // Store token in localStorage
+        localStorage.setItem('token', access_token);
+        
+        // Set the authorization header for all future requests
+        axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+        
+        // Get user data
+        const userResponse = await axios.get('/users/me');
+        setUser(userResponse.data);
+        
+        return { success: true, role };
+      } catch (error) {
+        console.error('Google login failed:', error);
+        return { 
+          success: false, 
+          error: error.response?.data?.detail || 'Google login failed. Please try again.'
+        };
+      }
+    };
 
-  // Register function
-  const register = async (userData) => {
-    try {
-      await axios.post('/users/', userData);
+    // Register function
+    const register = async (userData) => {
+      try {
+        await axios.post('/users/', userData);
+        
+        // Automatically log in after registration
+        return await login(userData.email, userData.password);
+      } catch (error) {
+        console.error('Registration failed:', error);
+        return { 
+          success: false, 
+          error: error.response?.data?.detail || 'Registration failed. Please try again.'
+        };
+      }
+    };
+
+    // Logout function
+    const logout = () => {
+      // Remove token from localStorage
+      localStorage.removeItem('token');
       
-      // Automatically log in after registration
-      return await login(userData.email, userData.password);
-    } catch (error) {
-      console.error('Registration failed:', error);
-      return { 
-        success: false, 
-        error: error.response?.data?.detail || 'Registration failed. Please try again.'
-      };
-    }
-  };
+      // Remove authorization header
+      delete axios.defaults.headers.common['Authorization'];
+      
+      // Clear user state
+      setUser(null);
+    };
 
-  // Logout function
-  const logout = () => {
-    // Remove token from localStorage
-    localStorage.removeItem('token');
-    
-    // Remove authorization header
-    delete axios.defaults.headers.common['Authorization'];
-    
-    // Clear user state
-    setUser(null);
-  };
+    const value = {
+      user,
+      isLoading,
+      login,
+      googleLogin,
+      register,
+      logout
+    };
 
-  const value = {
-    user,
-    isLoading,
-    login,
-    googleLogin,
-    register,
-    logout
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
