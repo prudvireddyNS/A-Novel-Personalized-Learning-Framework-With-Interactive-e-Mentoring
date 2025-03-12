@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi.middleware.cors import CORSMiddleware
+# from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import models, database, auth
 from typing import List
@@ -15,7 +16,7 @@ app = FastAPI()
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5175"],  # Frontend URL
+    allow_origins=["http://localhost:5173", "http://localhost:5175", "https://a-novel-personalized-learning-git-5db0d2-vemu-project-b4a5aba8.vercel.app"],  # Frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
