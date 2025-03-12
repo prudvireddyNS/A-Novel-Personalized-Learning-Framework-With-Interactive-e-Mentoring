@@ -17,7 +17,16 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY")  # Get from environment variable
+# # Get SECRET_KEY from environment variable or use a default if not set
+# # In production, always use environment variable
+# SECRET_KEY = os.getenv("SECRET_KEY")
+# if not SECRET_KEY or SECRET_KEY == "your-secret-key-here":
+#     # Fallback secret key for development only
+#     SECRET_KEY = "fallback_secret_key_for_development_only_do_not_use_in_production"
+#     print("WARNING: Using fallback SECRET_KEY. This should only be used in development.")
+
+SECRET_KEY = "6c14161002d367c83a96326ab11c2e190a1215858c41dc80601295553b295fc7"
+
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
