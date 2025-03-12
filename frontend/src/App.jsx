@@ -37,7 +37,7 @@ const queryClient = new QueryClient();
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 console.log(axios.defaults.baseURL);
 
-axios.defaults.withCredentials = false;
+axios.defaults.withCredentials = true;
 axios.defaults.headers.common['Accept'] = 'application/json';
 
 // Add request interceptor to handle auth

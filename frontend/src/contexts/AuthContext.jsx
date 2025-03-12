@@ -36,9 +36,6 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Login function
-  // At the top of the file, after imports
-  axios.defaults.withCredentials = true;
-  
   // Update the login function
   const login = async (email, password) => {
       try {
